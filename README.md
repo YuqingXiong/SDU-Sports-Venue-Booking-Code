@@ -1,6 +1,6 @@
 # SDU-Sports-Venue-Booking-Code
 
-python + Selenium + schedule
+python + Selenium + ddddocr + schedule
 
 # 使用方式
 
@@ -8,7 +8,15 @@ python + Selenium + schedule
 
 1. 下载Chrome 浏览器和Chrome Driver驱动
 
-2. 更改学号和密码，选择想要的时间列表
+2. `pip install selenium`
+
+   `pip install ddddocr `
+
+   `pip install schedule`
+
+   ...
+
+3. 更改学号和密码，选择想要的时间列表
 
    注意时间的格式，需要与预约时间相匹配
 
@@ -20,10 +28,10 @@ python + Selenium + schedule
    play_time = ["8:00-9:30", ]
    ```
 
-3. 设置运行的时间
+4. 设置运行的时间
 
    ```py
    schedule.every().day.at("9:00").do(main)  # 每天九点执行
    ```
 
-4. 在电脑时间标准下，至少提前比设置时间提前一分钟运行程序
+5. 在电脑时间标准下，至少提前比设置时间提前一分钟运行程序
