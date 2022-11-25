@@ -31,7 +31,7 @@ python + Selenium + ddddocr + schedule
 4. 设置运行的时间
 
    ```py
-   schedule.every().day.at("9:00").do(main)  # 每天九点执行
+   schedule.every().day.at("09:00").do(main)  # 每天九点执行
    ```
 
 5. 在电脑时间标准下，至少提前比设置时间提前一分钟运行程序
