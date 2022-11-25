@@ -13,8 +13,6 @@ options = Options()
 
 # 调起浏览器，打开网页
 url = "https://scenter.sdu.edu.cn/tp_fp/view?m=fp#act=fp/formHome"
-driver = webdriver.Chrome(options=options)
-driver.get(url)
 
 # 用于定位登录
 pos1 = '//*[@id="un"]'
@@ -29,6 +27,8 @@ play_time = ["8:00-9:30", ]
 
 def main():
     global get_time
+    driver = webdriver.Chrome(options=options)
+    driver.get(url)
     actions = ActionChains(driver)
     # 学生登录
     driver.find_element_by_xpath(pos1).clear()
@@ -101,6 +101,9 @@ def main():
                 # 点击场地列表
                 area_li = driver.find_element_by_xpath("/html/body/div[1]/div[3]/div[2]/div/button")
                 area_li.click()
+                driver.implicitly_wait(1)
+                area_list = driver.find_element_by_xpath(
+                    "/html/body/div[1]/div[3]/div[2]/div/div/ul").find_elements_by_xpath('li')
                 area_list[i].click()
                 driver.implicitly_wait(1)
                 # 点击时间列表
@@ -125,7 +128,6 @@ def main():
         people_boxs = driver.find_elements_by_xpath("//input[@type='checkbox']")
         people_boxs[0].click()  # 选择全选复选框
         # 点击申请按钮
-        # /html/body/div[1]/div[2]/div[13]/div/div[2]/div/div[2]/div/div/div[4]/div/div[2]/div[1]/div/div[3]/div[1]/button
         driver.switch_to.parent_frame()  # 返回上一级
         driver.find_element_by_id("commit").click()
         # 获取验证码图像
@@ -146,15 +148,17 @@ def main():
         with open(r'./image.png', 'rb') as f:
             img_bytes = f.read()
         res = ocr.classification(img_bytes)
+        print("验证码识别结果：", res)
         driver.find_element_by_id("applyCode").send_keys(str(res))
         # 点击确定
-        driver.find_element_by_id("fp_apply_code_apply").click()
-        # driver.quit()
+        # driver.find_element_by_id("fp_apply_code_apply")
+        driver.quit()
 
 
-schedule.every().day.at("11:02").do(main)  # 每天九点执行
+schedule.every().day.at("12:39").do(main)  # 每天九点执行
 
 while True:
     schedule.run_pending()
     if get_time:
         break
+    time.sleep(5)
