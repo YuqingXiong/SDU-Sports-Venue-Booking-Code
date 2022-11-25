@@ -18,8 +18,8 @@ url = "https://scenter.sdu.edu.cn/tp_fp/view?m=fp#act=fp/formHome"
 pos1 = '//*[@id="un"]'
 pos2 = '//*[@id="pd"]'
 pos3 = '//*[@id="index_login_btn"]'
-username = '202215133'
-password = '204130xyq'
+username = 'xxxxxxxxx'  # 学号
+password = 'xxxxxxxxx'  # 密码
 
 # 想要的时间
 play_time = ["8:00-9:30", ]
@@ -151,7 +151,7 @@ def main():
         print("验证码识别结果：", res)
         driver.find_element_by_id("applyCode").send_keys(str(res))
         # 点击确定
-        # driver.find_element_by_id("fp_apply_code_apply")
+        driver.find_element_by_id("fp_apply_code_apply")
         driver.quit()
 
 
