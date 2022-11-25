@@ -155,7 +155,7 @@ def main():
         driver.quit()
 
 
-schedule.every().day.at("12:39").do(main)  # 每天九点执行
+schedule.every().day.at("09：00").do(main)  # 每天九点执行
 
 while True:
     schedule.run_pending()
