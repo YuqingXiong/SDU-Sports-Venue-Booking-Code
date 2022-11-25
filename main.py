@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver import ActionChains
 from selenium.webdriver.chrome.options import Options
+from PIL import Image
+import ddddocr
 import schedule
 import time
 
@@ -18,8 +20,8 @@ driver.get(url)
 pos1 = '//*[@id="un"]'
 pos2 = '//*[@id="pd"]'
 pos3 = '//*[@id="index_login_btn"]'
-username = 'studentID'  # 学号,eg:202211111
-password = 'password'   # 密码，eg:sduxyqxxx
+username = '202215133'
+password = '204130xyq'
 
 # 想要的时间
 play_time = ["8:00-9:30", ]
@@ -88,6 +90,8 @@ def main():
             driver.implicitly_wait(0.5)
     area_list_len = len(area_list)
     print("area_list_len ========== ", area_list_len)
+    area_li = driver.find_element_by_xpath("/html/body/div[1]/div[3]/div[2]/div/button")
+    area_li.click()
 
     for i in range(1, area_list_len):
         # 获取时间列表
@@ -95,8 +99,8 @@ def main():
         while True:
             try:
                 # 点击场地列表
-                driver.find_element_by_xpath("/html/body/div[1]/div[3]/div[2]/div/button").click()
-                driver.implicitly_wait(0.5)
+                area_li = driver.find_element_by_xpath("/html/body/div[1]/div[3]/div[2]/div/button")
+                area_li.click()
                 area_list[i].click()
                 driver.implicitly_wait(1)
                 # 点击时间列表
@@ -121,11 +125,34 @@ def main():
         people_boxs = driver.find_elements_by_xpath("//input[@type='checkbox']")
         people_boxs[0].click()  # 选择全选复选框
         # 点击申请按钮
-        # driver.find_element_by_xpath("/html/body/div[1]/div[2]/div[13]/div/div[2]/div/div[2]/div/div/div[4]/div/div[2]/div[1]/div/div[3]/div[1]/button").click()
+        # /html/body/div[1]/div[2]/div[13]/div/div[2]/div/div[2]/div/div/div[4]/div/div[2]/div[1]/div/div[3]/div[1]/button
+        driver.switch_to.parent_frame()  # 返回上一级
+        driver.find_element_by_id("commit").click()
+        # 获取验证码图像
+        img_code = driver.find_element_by_class_name("ide_code_image")
+        print("验证码的坐标为：", img_code.location)  # 控制台查看
+        print("验证码的大小为：", img_code.size)  # 图片大小
+        left = img_code.location['x']  # x点的坐标
+        top = img_code.location['y']  # y点的坐标
+        right = img_code.size['width'] + left  # 上面右边点的坐标
+        down = img_code.size['height'] + top  # 下面右边点的坐标
+        # 页面截图
+        driver.save_screenshot("./image.png")  # 可以修改保存地址
+        image = Image.open('./image.png')
+        # (4)将图片验证码截取
+        code_image = image.crop((left, top, right, down))
+        code_image.save('./image.png')  # 截取的验证码图片保存为新的文件
+        ocr = ddddocr.DdddOcr()
+        with open(r'./image.png', 'rb') as f:
+            img_bytes = f.read()
+        res = ocr.classification(img_bytes)
+        driver.find_element_by_id("applyCode").send_keys(str(res))
+        # 点击确定
+        driver.find_element_by_id("fp_apply_code_apply").click()
         # driver.quit()
 
 
-schedule.every().day.at("9:00").do(main)  # 每天九点执行
+schedule.every().day.at("11:02").do(main)  # 每天九点执行
 
 while True:
     schedule.run_pending()
