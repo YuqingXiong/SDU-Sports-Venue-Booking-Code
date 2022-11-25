@@ -18,8 +18,8 @@ driver.get(url)
 pos1 = '//*[@id="un"]'
 pos2 = '//*[@id="pd"]'
 pos3 = '//*[@id="index_login_btn"]'
-username = '202215133'
-password = '204130xyq'
+username = 'studentID'  # 学号,eg:202211111
+password = 'password'   # 密码，eg:sduxyqxxx
 
 # 想要的时间
 play_time = ["8:00-9:30", ]
@@ -125,7 +125,7 @@ def main():
         # driver.quit()
 
 
-schedule.every().day.at("10:32").do(main)  # 每天九点执行
+schedule.every().day.at("9:00").do(main)  # 每天九点执行
 
 while True:
     schedule.run_pending()
