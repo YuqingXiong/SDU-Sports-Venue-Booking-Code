@@ -6,6 +6,13 @@ import ddddocr
 import schedule
 import time
 
+"""
+1. 一周只能申请三次
+2. 更改学号与密码
+3. 设置时间段列表
+4. 设置运行时间
+"""
+
 get_time = 0
 
 options = Options()
@@ -15,14 +22,20 @@ options = Options()
 url = "https://scenter.sdu.edu.cn/tp_fp/view?m=fp#act=fp/formHome"
 
 # 用于定位登录
-pos1 = '//*[@id="un"]'
-pos2 = '//*[@id="pd"]'
-pos3 = '//*[@id="index_login_btn"]'
+username_input = '//*[@id="un"]'
+password_input = '//*[@id="pd"]'
+login_btn = '//*[@id="index_login_btn"]'
 username = 'xxxxxxxxx'  # 学号
 password = 'xxxxxxxxx'  # 密码
 
+# 教务教学
+top_book_module = '//a[@vid="1079350034432"]'
+# 青岛校区风雨操场页面
+book_module = '//span[@title="青岛校区风雨操场预约"]'
+
 # 想要的时间
-play_time = ["8:00-9:30", ]
+play_time = ["16:00-17:30", "18:00-19:30", "19:30-21:00", "20:00-21:30"]
+# 16:00-17:30 18:30-20:00
 
 
 def main():
@@ -31,24 +44,20 @@ def main():
     driver.get(url)
     actions = ActionChains(driver)
     # 学生登录
-    driver.find_element_by_xpath(pos1).clear()
-    driver.find_element_by_xpath(pos1).send_keys(username)
-    driver.find_element_by_xpath(pos2).clear()
-    driver.find_element_by_xpath(pos2).send_keys(password)
-    driver.find_element_by_xpath(pos3).click()
+    driver.find_element_by_xpath(username_input).clear()
+    driver.find_element_by_xpath(username_input).send_keys(username)
+    driver.find_element_by_xpath(password_input).clear()
+    driver.find_element_by_xpath(password_input).send_keys(password)
+    driver.find_element_by_xpath(login_btn).click()
     actions.perform()
     driver.switch_to.window(driver.window_handles[-1])
     driver.implicitly_wait(1)
 
-    # 打开教务教学
-    pos4 = '//a[@vid="1079350034432"]'
-    # 打开青岛校区风雨操场页面
-    pos5 = '//span[@title="青岛校区风雨操场预约"]'
     while True:
         try:
-            teach = driver.find_element_by_xpath(pos4)
+            teach = driver.find_element_by_xpath(top_book_module)
             teach.click()
-            book_span = driver.find_element_by_xpath(pos5)
+            book_span = driver.find_element_by_xpath(book_module)
             book_span.click()
             break
         except:
@@ -132,33 +141,35 @@ def main():
         driver.find_element_by_id("commit").click()
         # 获取验证码图像
         img_code = driver.find_element_by_class_name("ide_code_image")
-        print("验证码的坐标为：", img_code.location)  # 控制台查看
-        print("验证码的大小为：", img_code.size)  # 图片大小
+        # print("验证码的坐标为：", img_code.location)
+        # print("验证码的大小为：", img_code.size)
         left = img_code.location['x']  # x点的坐标
         top = img_code.location['y']  # y点的坐标
         right = img_code.size['width'] + left  # 上面右边点的坐标
         down = img_code.size['height'] + top  # 下面右边点的坐标
         # 页面截图
-        driver.save_screenshot("./image.png")  # 可以修改保存地址
-        image = Image.open('./image.png')
+        img_code_file_path = "./image.png"
+        driver.save_screenshot(img_code_file_path)  # 可以修改保存地址
+        image = Image.open(img_code_file_path)
         # (4)将图片验证码截取
         code_image = image.crop((left, top, right, down))
-        code_image.save('./image.png')  # 截取的验证码图片保存为新的文件
+        code_image.save(img_code_file_path)  # 截取的验证码图片保存为新的文件
         ocr = ddddocr.DdddOcr()
-        with open(r'./image.png', 'rb') as f:
+        with open("r'" + img_code_file_path, 'rb') as f:
             img_bytes = f.read()
         res = ocr.classification(img_bytes)
         print("验证码识别结果：", res)
         driver.find_element_by_id("applyCode").send_keys(str(res))
         # 点击确定
-        driver.find_element_by_id("fp_apply_code_apply")
+        # driver.find_element_by_id("fp_apply_code_apply").click()
         driver.quit()
 
 
-schedule.every().day.at("09：00").do(main)  # 每天九点执行
+schedule.every().day.at("09:00").do(main)  # 每天九点执行
 
 while True:
     schedule.run_pending()
     if get_time:
         break
     time.sleep(5)
+# main()
