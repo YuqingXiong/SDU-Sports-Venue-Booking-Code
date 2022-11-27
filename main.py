@@ -34,8 +34,7 @@ top_book_module = '//a[@vid="1079350034432"]'
 book_module = '//span[@title="青岛校区风雨操场预约"]'
 
 # 想要的时间
-play_time = ["16:00-17:30", "18:00-19:30", "19:30-21:00", "20:00-21:30"]
-# 16:00-17:30 18:30-20:00
+play_time = ["16:00-17:30", "18:00-19:30", "18:30-20:00", "19:30-21:00", "20:00-21:30"]
 
 
 def main():
@@ -161,7 +160,7 @@ def main():
         print("验证码识别结果：", res)
         driver.find_element_by_id("applyCode").send_keys(str(res))
         # 点击确定
-        # driver.find_element_by_id("fp_apply_code_apply").click()
+        driver.find_element_by_id("fp_apply_code_apply").click()
         driver.quit()
 
 
